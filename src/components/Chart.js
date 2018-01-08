@@ -12,31 +12,40 @@ class Chart extends Component{
     }
 
     componentDidMount() {
-        return fetch('https://tarragon-server.gadgetlabs.com/assets?startDate=2017-01-01&endDate=2017-01-07&granularity=day')
+        return fetch('https://tarragon-server.gadgetlabs.com/assets?startDate=2018-01-01&endDate=2018-01-07&granularity=day')
             .then((response) => response.json())
             .then((responseJson) => {
-                console.log(responseJson);
+                var labels = [];
+                var dataPoints = [];
+                var symbols = [];
+                var dataSets = [];
+                responseJson.map(function(item) {
+                    labels.push(item.date)
+                    item.assets.map( function(asset) {
+                        if(Array.isArray(dataPoints[asset.symbol]) == false) {
+                            symbols.push(asset.symbol);
+                            dataPoints[asset.symbol] = [];
+                        }
+                        dataPoints[asset.symbol].push(asset.value);
+                    })
+                })
+                symbols.map(function(symbol) {
+                    var symbolData = [];
+                    dataPoints[symbol].map(function(points) {
+                        symbolData.push(points);
+                    })
+                    dataSets.push({
+                        label:symbol,
+                        data:symbolData,
+                        borderWidth: 1
+                    })
+                })
+
                 this.setState({
                     isLoading: false,
                     chartData:{
-                        labels:['2017-01-01', '2017-01-02', '2017-01-03', '2017-01-04', '2017-01-05'],
-                        datasets:[
-                            {
-                                label:'BTC',
-                                data:[1100, 1500, 1800, 2100, 2800],
-                                borderWidth: 1
-                            },
-                            {
-                                label:'BCH',
-                                data:[100, 110, 125, 160, 180],
-                                borderWidth: 1
-                            },
-                            {
-                                label:'ETH',
-                                data:[1000, 1005, 1018, 1165, 1250],
-                                borderWidth: 1
-                            }
-                        ]
+                        labels:labels,
+                        datasets:dataSets
                     }
                 }, function() {
                     // do something with new state
