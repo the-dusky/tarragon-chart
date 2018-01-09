@@ -1,6 +1,20 @@
 import React, {Component} from 'react';
 import {Bar, Line, Pie} from 'react-chartjs-2';
 
+var borderColors = [
+    "#3e95cd",
+    "#8e5ea2",
+    "#3cba9f",
+    "#e8c3b9",
+    "#c45850",
+    "#3f51b5",
+    "#f9a825",
+    "#870000",
+    "#616161",
+    "#2e7d32",
+    "#fff176"
+]
+
 class Chart extends Component{
 
     constructor(props){
@@ -12,7 +26,7 @@ class Chart extends Component{
     }
 
     componentDidMount() {
-        return fetch('https://tarragon-server.gadgetlabs.com/assets?startDate=2018-01-01&endDate=2018-01-07&granularity=day')
+        return fetch('https://tarragon-server.gadgetlabs.com/assets?startDate=2018-01-01&endDate=2018-01-9&granularity=day')
             .then((response) => response.json())
             .then((responseJson) => {
                 var labels = [];
@@ -29,6 +43,7 @@ class Chart extends Component{
                         dataPoints[asset.symbol].push(asset.value);
                     })
                 })
+                var count = 0;
                 symbols.map(function(symbol) {
                     var symbolData = [];
                     dataPoints[symbol].map(function(points) {
@@ -37,8 +52,11 @@ class Chart extends Component{
                     dataSets.push({
                         label:symbol,
                         data:symbolData,
-                        borderWidth: 1
+                        borderWidth: 4,
+                        borderColor: borderColors[count],
+                        lineTension:0
                     })
+                    count++;
                 })
 
                 this.setState({
@@ -68,7 +86,12 @@ class Chart extends Component{
                 <Line
                     data={this.state.chartData}
                     options={{
-                        maintainAspectRatio: false
+                        maintainAspectRatio: true,
+                        scales: {
+                            yAxes: [{
+                                stacked: true
+                            }]
+                        }
                     }}
                 />
             </div>
