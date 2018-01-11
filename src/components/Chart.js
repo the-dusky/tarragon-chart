@@ -26,7 +26,7 @@ class Chart extends Component{
     }
 
     componentDidMount() {
-        return fetch('https://tarragon-server.gadgetlabs.com/assets?startDate=2018-01-01&endDate=2018-01-9&granularity=day')
+        return fetch('https://tarragon-server.gadgetlabs.com/assets?startDate=2017-01-01&endDate=2018-01-9&granularity=day')
             .then((response) => response.json())
             .then((responseJson) => {
                 var labels = [];
@@ -54,7 +54,8 @@ class Chart extends Component{
                         data:symbolData,
                         borderWidth: 4,
                         borderColor: borderColors[count],
-                        lineTension:0
+                        lineTension:0,
+                        pointRadius:0
                     })
                     count++;
                 })
